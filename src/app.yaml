@@ -1,0 +1,23 @@
+application: laxcrime
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /upload_information
+  script: controllers.UploadInformation.app
+  login: admin
+  
+- url: /create_default_information
+  script: controllers.CreateDefaultInformation.app
+  login: admin
+
+  
+libraries:
+- name: webapp2
+  version: "2.5.1"
