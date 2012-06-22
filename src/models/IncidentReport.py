@@ -15,6 +15,6 @@ class IncidentReport(db.Model):
    time = db.DateTimeProperty()
    city = db.ReferenceProperty(City)
    address = db.TextProperty()
-   latLong = db.GeoPt
+   latLong = db.GeoPtProperty()
 
 

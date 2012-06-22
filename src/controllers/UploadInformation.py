@@ -8,6 +8,8 @@ import re
 import webapp2
 from datetime import datetime
 
+from google.appengine.api import taskqueue
+from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
 from models.City import City
@@ -22,7 +24,7 @@ class UploadInformationHandler(webapp2.RequestHandler):
 
    def get(self):
       """
-      Displays the main page of the application
+      Displays a form to upload a day's worth of incident reports
       """
       path = os.path.join(os.path.dirname(__file__), '../pages/upload_information.html')
       self.response.out.write(template.render(path, {}))
@@ -69,7 +71,12 @@ class UploadInformationHandler(webapp2.RequestHandler):
                      dateString = endDate
                      if int(match.group(0)) >= 3 and int(match.group(0)) < 12 and -1 != timeToken.find('p.m.'):
                         dateString = startDate
+                        
+                     # Now make sure lines such as 3 p.m = 3:00 p.m.
+                     if (-1 == timeToken.find(':')):
+                        timeToken = timeToken.replace(' ', ':00 ')
                      
+                     # Now replace AM or PM with a.m or p.m.
                      dateOfIncident = datetime.strptime(
                       '%s %s' %(dateString, timeToken.replace('a.m.', 'AM').replace('p.m.', 'PM')), 
                       '%m/%d/%Y %I:%M %p')
@@ -84,6 +91,9 @@ class UploadInformationHandler(webapp2.RequestHandler):
                       city = city,
                       address = addressToken)
                      incidentReport.save()
+                     
+                     # Add background task for getting geo coordinates of the address
+                     taskqueue.add(url='/retrieve-incident-latlong', params={'id': incidentReport.key().id()})
                   #
                   else:
                      incidentType = None
