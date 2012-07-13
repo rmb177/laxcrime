@@ -23,9 +23,12 @@
       });
     }
     return showInitialMap = function(options) {
-      var map;
+      var datePickerDiv, map, today;
       map = new google.maps.Map(document.getElementById("map_canvas"), options);
-      return $.ajax({
+      datePickerDiv = document.createElement('div');
+      datePickerDiv.index = 1;
+      map.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv);
+      $.ajax({
         url: encodeURI('get_incident_reports?date=7/4/2012'),
         success: function(data) {
           var incident, _i, _len, _results;
@@ -46,6 +49,12 @@
         error: function() {
           return alert('Error retrieving logs for the selected date.');
         }
+      });
+      datePickerDiv.setAttribute('id', 'datePickerDiv');
+      today = new Date();
+      return $(datePickerDiv).datepicker({
+        minDate: new Date(2012, 0, 1),
+        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
       });
     };
   };

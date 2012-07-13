@@ -22,9 +22,13 @@ handlers:
   
 - url: /retrieve-incident-latlong
   script: controllers.RetrieveIncidentLatLong.app
+  
+- url: /get_incident_reports
+  script: controllers.GetIncidentReports.app
 
 - url: /
   script: controllers.Main.app
+  login: admin
 
   
 libraries:

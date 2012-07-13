@@ -59,6 +59,10 @@ class CreateDefaultInformationHandler(webapp2.RequestHandler):
       city.save()
       self.response.out.write('Created cashton<br/>')
       
+      city = City(name='coon valley')
+      city.save()
+      self.response.out.write('Created coon valley')
+      
       
       aType = IncidentType(name="police calls")
       aType.save()

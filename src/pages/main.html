@@ -2,40 +2,24 @@
 <html>
    <head>
       <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-      <link href="/public/css/main.css" rel="stylesheet">
-    
+      <link href="/public/css/main.css" rel="stylesheet" />
+      <link href="/public/css/ui-lightness/jquery-ui-1.8.21.custom.css" rel="stylesheet" />
+      
+      <style type="text/css">
+         .ui-widget 
+         {
+            font-size: .75em;
+            width: 12em;
+         }
+      </style>
+      
       <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-cupyKUZuaCnJ-6aWiIy1pX3FmBDfKLo&amp;sensor=true">
       </script>
-    
-      <script type="text/javascript">
-         function initialize() 
-         {
-            var options = 
-            {
-               center: new google.maps.LatLng(43.81211, -91.22695),
-               zoom: 15,
-               mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            
-            if (navigator.geolocation)
-            {
-               navigator.geolocation.getCurrentPosition(
-                  function(position)
-                  {
-                     options['center'] = 
-                      new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                     options['zoom'] = 18;
-                  }, 
-                  function()
-                  {
-                     alert("Error getting your location.")
-                  });
-            }
-            var map = new google.maps.Map(document.getElementById("map_canvas"), options);
-         }
-      </script>
+      <script type="text/javascript" src="/public/javascript/jquery-1.7.2.min.js"></script>
+      <script type="text/javascript" src="/public/javascript/jquery-ui-1.8.21.custom.min.js"></script>
+      <script type="text/javascript" src="/public/javascript/laxcrime.js"></script>
    </head>
-   <body onload="initialize()">
+   <body>
       <div id="map_canvas" style="width:100%; height:100%"></div>
    </body>
 </html>

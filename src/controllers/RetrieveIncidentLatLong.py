@@ -33,17 +33,30 @@ class RetrieveIncidentLatLong(webapp2.RequestHandler):
          url = "http://maps.googleapis.com/maps/api/geocode/json?%s" %(params)
          result = urlfetch.fetch(url)
          if 200 == result.status_code:
-            llResults = json.loads(result.content)['results'][0]['geometry']['location']
-            report.latLong = db.GeoPt(llResults['lat'], llResults['lng'])
-            report.save()
+            try:
+               llResults = json.loads(result.content)['results'][0]['geometry']['location']
+               report.latLong = db.GeoPt(llResults['lat'], llResults['lng'])
+               report.save()
+            except:
+               mail.send_mail(sender="LaxCrime <ryan.brubaker@gmail.com>",
+                to="Ryan Brubaker <ryan.brubaker@gmail.com>",
+                subject="Error getting lat long",
+                body="""
+                     Error trying to retrieve lat/long for incident report with id: %d
+                     \n\n
+                     %s
+                  """ %(incidentId, result.content))
+               
          else:
             log.debug(result.content)
             mail.send_mail(sender="LaxCrime <ryan.brubaker@gmail.com>",
-             to="Ryan Brubaker <ryan.brubaer@gmail.com>",
-             subject="Your account has been approved",
+             to="Ryan Brubaker <ryan.brubaker@gmail.com>",
+             subject="Error getting lat long",
              body="""
                      Error trying to retrieve lat/long for incident report with id: %d
-                  """ %(incidentId))
+                     \n\n
+                     %s
+                  """ %(incidentId, result.content))
          #
       #
    #   
