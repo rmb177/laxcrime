@@ -3,32 +3,61 @@
   var initialize;
 
   initialize = function() {
-    var options, showInitialMap;
-    options = {
-      center: new google.maps.LatLng(43.81211, -91.22695),
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    /*
-       Check if the user's browser supports geolocation and if so, zoom in on their location
+    var fMap, fMarkers, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
+    kEarliestDateWithData = new Date(2012, 0, 1);
+    kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695);
+    kDefaultZoomLevel = 15;
+    kZoomLevelWithLocation = 17;
+    /* array of markers on the map
     */
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        options['center'] = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        options['zoom'] = 17;
-        return showInitialMap(options);
-      }, function() {
-        return showInitialMap(options);
-      });
-    }
-    return showInitialMap = function(options) {
-      var datePickerDiv, map, today;
-      map = new google.maps.Map(document.getElementById("map_canvas"), options);
+    fMarkers = [];
+    fMap = null;
+    /*
+       Set up the map and the calendar to allow the user
+       to select different dates.
+    */
+
+    setupMapControls = function() {
+      var datePickerDiv, options, today;
+      options = {
+        center: kCenterOfLaCrosse,
+        zoom: kDefaultZoomLevel,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      fMap = new google.maps.Map(document.getElementById("map_canvas"), options);
       datePickerDiv = document.createElement('div');
-      datePickerDiv.index = 1;
-      map.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv);
-      $.ajax({
+      datePickerDiv.setAttribute('id', 'datePickerDiv');
+      fMap.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv);
+      today = new Date();
+      $(datePickerDiv).datepicker({
+        minDate: kEarliestDateWithData,
+        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
+      });
+      return google.maps.event.addDomListener(datePickerDiv, 'click', function() {
+        var marker, _i, _len;
+        for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
+          marker = fMarkers[_i];
+          marker.setMap(null);
+        }
+        return updateMap;
+      });
+    };
+    /*
+       Check if the user's browser supports geolocation and if so, update map options to center
+       on the location and zoom in a little bit.
+    */
+
+    getUserLocation = function() {
+      if (navigator.geolocation) {
+        return navigator.geolocation.getCurrentPosition(function(position) {
+          fMap.setZoom(kZoomLevelWithLocation);
+          return fMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        });
+      }
+    };
+    updateMap = function() {
+      return $.ajax({
         url: encodeURI('get_incident_reports?date=7/4/2012'),
         success: function(data) {
           var incident, _i, _len, _results;
@@ -41,7 +70,8 @@
                 position: new google.maps.LatLng(parseFloat(incident.lat), parseFloat(incident.long)),
                 title: incident.description + ', ' + incident.address + ' ' + incident.time
               });
-              return marker.setMap(map);
+              marker.setMap(fMap);
+              return fMarkers.push(marker);
             })(incident));
           }
           return _results;
@@ -50,13 +80,10 @@
           return alert('Error retrieving logs for the selected date.');
         }
       });
-      datePickerDiv.setAttribute('id', 'datePickerDiv');
-      today = new Date();
-      return $(datePickerDiv).datepicker({
-        minDate: new Date(2012, 0, 1),
-        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
-      });
     };
+    setupMapControls();
+    getUserLocation();
+    return updateMap();
   };
 
   $(document).ready(initialize);
