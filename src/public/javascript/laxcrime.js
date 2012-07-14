@@ -3,11 +3,11 @@
   var initialize;
 
   initialize = function() {
-    var fMap, fMarkers, fSelectedDate, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
+    var authorizeUser, fMap, fMarkers, fSelectedDate, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
     kEarliestDateWithData = new Date(2012, 0, 1);
     kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695);
     kDefaultZoomLevel = 15;
-    kZoomLevelWithLocation = 17;
+    kZoomLevelWithLocation = 16;
     /* array of markers on the map
     */
 
@@ -37,13 +37,16 @@
       });
       fSelectedDate = $(datePickerDiv).datepicker('getDate');
       return google.maps.event.addDomListener(datePickerDiv, 'click', function() {
-        var marker, _i, _len;
-        for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
-          marker = fMarkers[_i];
-          marker.setMap(null);
+        var marker, newDate, _i, _len;
+        newDate = $(datePickerDiv).datepicker('getDate');
+        if (newDate !== fSelectedDate) {
+          for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
+            marker = fMarkers[_i];
+            marker.setMap(null);
+          }
+          fSelectedDate = newDate;
+          return updateMap();
         }
-        fSelectedDate = $(datePickerDiv).datepicker('getDate');
-        return updateMap();
       });
     };
     /*
@@ -84,9 +87,28 @@
         }
       });
     };
-    setupMapControls();
-    getUserLocation();
-    return updateMap();
+    authorizeUser = function() {
+      var password;
+      password = prompt("Enter password");
+      if (password !== null && password !== "") {
+        return $.ajax({
+          url: 'authorize_user?password=' + password,
+          success: function(data) {
+            if ("true" === data) {
+              setupMapControls();
+              getUserLocation();
+              return updateMap();
+            } else {
+              return authorizeUser();
+            }
+          },
+          error: function() {
+            return authorizeUser();
+          }
+        });
+      }
+    };
+    return authorizeUser();
   };
 
   $(document).ready(initialize);

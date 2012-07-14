@@ -4,7 +4,7 @@ initialize = ->
    kEarliestDateWithData = new Date(2012, 0, 1)
    kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695)
    kDefaultZoomLevel = 15
-   kZoomLevelWithLocation = 17
+   kZoomLevelWithLocation = 16
    
    ### array of markers on the map ###
    fMarkers = []
@@ -33,9 +33,11 @@ initialize = ->
       fSelectedDate = $(datePickerDiv).datepicker('getDate')
       
       google.maps.event.addDomListener(datePickerDiv, 'click', ->
-         marker.setMap(null) for marker in fMarkers
-         fSelectedDate = $(datePickerDiv).datepicker('getDate')      
-         updateMap())
+         newDate = $(datePickerDiv).datepicker('getDate')
+         if newDate != fSelectedDate
+            marker.setMap(null) for marker in fMarkers
+            fSelectedDate = newDate      
+            updateMap())
       
    ###
    Check if the user's browser supports geolocation and if so, update map options to center
@@ -64,8 +66,21 @@ initialize = ->
             alert('Error retrieving logs for the selected date.')
        )
       
-      setupMapControls()
-      getUserLocation()
-      updateMap()
+      authorizeUser = ->
+         password = prompt("Enter password")
+         if password != null and password != ""
+            $.ajax(
+             url: 'authorize_user?password=' + password
+             success: (data) -> 
+               if "true" == data
+                  setupMapControls()
+                  getUserLocation()
+                  updateMap()
+               else
+                  authorizeUser()
+             error: ->
+                authorizeUser())
+
+      authorizeUser()      
 
 $(document).ready(initialize)

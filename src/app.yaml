@@ -25,6 +25,9 @@ handlers:
   
 - url: /get_incident_reports
   script: controllers.GetIncidentReports.app
+  
+- url: /authorize_user
+  script: controllers.AuthorizeUser.app
 
 - url: /
   script: controllers.Main.app
