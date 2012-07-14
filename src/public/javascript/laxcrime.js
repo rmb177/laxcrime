@@ -3,7 +3,7 @@
   var initialize;
 
   initialize = function() {
-    var fMap, fMarkers, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
+    var fMap, fMarkers, fSelectedDate, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
     kEarliestDateWithData = new Date(2012, 0, 1);
     kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695);
     kDefaultZoomLevel = 15;
@@ -13,6 +13,7 @@
 
     fMarkers = [];
     fMap = null;
+    fSelectedDate = null;
     /*
        Set up the map and the calendar to allow the user
        to select different dates.
@@ -34,13 +35,15 @@
         minDate: kEarliestDateWithData,
         maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
       });
+      fSelectedDate = $(datePickerDiv).datepicker('getDate');
       return google.maps.event.addDomListener(datePickerDiv, 'click', function() {
         var marker, _i, _len;
         for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
           marker = fMarkers[_i];
           marker.setMap(null);
         }
-        return updateMap;
+        fSelectedDate = $(datePickerDiv).datepicker('getDate');
+        return updateMap();
       });
     };
     /*
@@ -58,7 +61,7 @@
     };
     updateMap = function() {
       return $.ajax({
-        url: encodeURI('get_incident_reports?date=7/4/2012'),
+        url: encodeURI('get_incident_reports?date=' + (fSelectedDate.getMonth() + 1) + '/' + fSelectedDate.getDate() + '/' + fSelectedDate.getFullYear()),
         success: function(data) {
           var incident, _i, _len, _results;
           _results = [];

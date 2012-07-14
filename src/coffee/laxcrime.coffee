@@ -9,6 +9,7 @@ initialize = ->
    ### array of markers on the map ###
    fMarkers = []
    fMap = null
+   fSelectedDate = null
    
    ###
    Set up the map and the calendar to allow the user
@@ -28,10 +29,13 @@ initialize = ->
       $(datePickerDiv).datepicker(
        minDate: kEarliestDateWithData,
        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1))
-   
+      
+      fSelectedDate = $(datePickerDiv).datepicker('getDate')
+      
       google.maps.event.addDomListener(datePickerDiv, 'click', ->
          marker.setMap(null) for marker in fMarkers
-         updateMap)
+         fSelectedDate = $(datePickerDiv).datepicker('getDate')      
+         updateMap())
       
    ###
    Check if the user's browser supports geolocation and if so, update map options to center
@@ -46,7 +50,7 @@ initialize = ->
    
    updateMap = ->
       $.ajax(
-         url: encodeURI('get_incident_reports?date=7/4/2012')
+         url: encodeURI('get_incident_reports?date=' + (fSelectedDate.getMonth() + 1) + '/' + fSelectedDate.getDate() + '/' + fSelectedDate.getFullYear())
          success: (data) -> 
             for incident in data
                do (incident) ->
