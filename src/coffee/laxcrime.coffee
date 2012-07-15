@@ -34,7 +34,7 @@ initialize = ->
       
       google.maps.event.addDomListener(datePickerDiv, 'click', ->
          newDate = $(datePickerDiv).datepicker('getDate')
-         if newDate != fSelectedDate
+         if newDate.getTime() != fSelectedDate.getTime()
             marker.setMap(null) for marker in fMarkers
             fSelectedDate = newDate      
             updateMap())

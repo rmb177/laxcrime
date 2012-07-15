@@ -31,8 +31,6 @@ handlers:
 
 - url: /
   script: controllers.Main.app
-  login: admin
-
   
 libraries:
 - name: webapp2

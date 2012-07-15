@@ -27,7 +27,7 @@ class RetrieveIncidentLatLong(webapp2.RequestHandler):
       if None != report:
          params = urllib.urlencode(
          {
-            'address' : 'http://maps.googleapis.com/maps/api/geocode/json?address=%s %s WI' %(report.address, report.city.name),
+            'address' : '%s %s WI' %(report.address, report.city.name),
             'sensor' : 'true' 
          })
          url = "http://maps.googleapis.com/maps/api/geocode/json?%s" %(params)

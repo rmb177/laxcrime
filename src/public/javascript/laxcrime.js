@@ -39,7 +39,7 @@
       return google.maps.event.addDomListener(datePickerDiv, 'click', function() {
         var marker, newDate, _i, _len;
         newDate = $(datePickerDiv).datepicker('getDate');
-        if (newDate !== fSelectedDate) {
+        if (newDate.getTime() !== fSelectedDate.getTime()) {
           for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
             marker = fMarkers[_i];
             marker.setMap(null);
