@@ -36,6 +36,7 @@ initialize = ->
          newDate = $(datePickerDiv).datepicker('getDate')
          if newDate.getTime() != fSelectedDate.getTime()
             marker.setMap(null) for marker in fMarkers
+            fMarkers = []
             fSelectedDate = newDate      
             updateMap())
       
@@ -61,6 +62,11 @@ initialize = ->
                      title: incident.description + ', ' + incident.address + ' ' + incident.time
                   marker.setMap(fMap)
                   fMarkers.push(marker)
+                  google.maps.event.addListener(marker, 'click', ->
+                     infoWindow = new google.maps.InfoWindow()
+                     infoWindow.setContent(marker.title)
+                     infoWindow.open(fMap, marker)
+                     return false;)
                     
          error: ->
             alert('Error retrieving logs for the selected date.')

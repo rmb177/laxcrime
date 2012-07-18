@@ -44,6 +44,7 @@
             marker = fMarkers[_i];
             marker.setMap(null);
           }
+          fMarkers = [];
           fSelectedDate = newDate;
           return updateMap();
         }
@@ -77,7 +78,14 @@
                 title: incident.description + ', ' + incident.address + ' ' + incident.time
               });
               marker.setMap(fMap);
-              return fMarkers.push(marker);
+              fMarkers.push(marker);
+              return google.maps.event.addListener(marker, 'click', function() {
+                var infoWindow;
+                infoWindow = new google.maps.InfoWindow();
+                infoWindow.setContent(marker.title);
+                infoWindow.open(fMap, marker);
+                return false;
+              });
             })(incident));
           }
           return _results;
