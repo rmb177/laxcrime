@@ -3,7 +3,6 @@ Copyright (c) 2012 Brubaker LLC. All rights reserved.
 """
 
 import json
-import logging
 import urllib
 import webapp2
 
@@ -13,8 +12,6 @@ from google.appengine.ext import db
 
 from models.IncidentReport import IncidentReport
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.DEBUG)
 
 class RetrieveIncidentLatLong(webapp2.RequestHandler):
 
@@ -48,7 +45,6 @@ class RetrieveIncidentLatLong(webapp2.RequestHandler):
                   """ %(incidentId, result.content))
                
          else:
-            log.debug(result.content)
             mail.send_mail(sender="LaxCrime <ryan.brubaker@gmail.com>",
              to="Ryan Brubaker <ryan.brubaker@gmail.com>",
              subject="Error getting lat long",

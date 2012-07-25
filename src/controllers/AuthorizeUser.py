@@ -5,9 +5,12 @@ Copyright (c) 2012 Brubaker LLC. All rights reserved.
 import webapp2
 
 
+log = logging.getLogger(__file__)
+log.setLevel(logging.DEBUG)
+
 class AuthorizeUser(webapp2.RequestHandler):
 
-   def get(self):
+   def post(self):
       """
       Checks password submitted by user. Just have a simple form here for demo for the tribune.
       Eventually this will go away so nothing fancy here.

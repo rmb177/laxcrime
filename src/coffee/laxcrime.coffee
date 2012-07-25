@@ -1,5 +1,19 @@
 
-initialize = ->
+initializeAuthorizePage = ->
+   $('#passwordSubmit').click(->
+      $.ajax(
+             url: 'authorize_user'
+             type: "POST"
+             data: {password: $('#passwordField').val()}
+             success: (data) -> 
+               if "false" == data
+                  $('#errorMessage').show()
+               else
+                  $('#passwordPage').css('display', 'none')
+                  $('#mapPage').css('display', 'block')
+                  initializeMapPage()))
+
+initializeMapPage = ->
    
    kEarliestDateWithData = new Date(2012, 0, 1)
    kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695)
@@ -20,7 +34,7 @@ initialize = ->
        center:      kCenterOfLaCrosse,
        zoom:        kDefaultZoomLevel,
        mapTypeId:   google.maps.MapTypeId.ROADMAP
-      fMap = new google.maps.Map(document.getElementById("map_canvas"), options)
+      fMap = new google.maps.Map(document.getElementById("mapPage"), options)
       datePickerDiv = document.createElement('div')
       datePickerDiv.setAttribute('id', 'datePickerDiv')
       fMap.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv)
@@ -72,21 +86,10 @@ initialize = ->
             alert('Error retrieving logs for the selected date.')
        )
       
-      authorizeUser = ->
-         password = prompt("Enter password")
-         if password != null and password != ""
-            $.ajax(
-             url: 'authorize_user?password=' + password
-             success: (data) -> 
-               if "true" == data
-                  setupMapControls()
-                  getUserLocation()
-                  updateMap()
-               else
-                  authorizeUser()
-             error: ->
-                authorizeUser())
+      
+      setupMapControls()
+      getUserLocation()
+      updateMap()
 
-      authorizeUser()      
 
-$(document).ready(initialize)
+$(document).ready(initializeAuthorizePage)
