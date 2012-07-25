@@ -1,4 +1,3 @@
-
 initializeAuthorizePage = ->
    $('#passwordSubmit').click(->
       $.ajax(
@@ -22,6 +21,7 @@ initializeMapPage = ->
    
    ### array of markers on the map ###
    fMarkers = []
+   fCurrentInfoWindow = null
    fMap = null
    fSelectedDate = null
    
@@ -37,7 +37,7 @@ initializeMapPage = ->
       fMap = new google.maps.Map(document.getElementById("mapPage"), options)
       datePickerDiv = document.createElement('div')
       datePickerDiv.setAttribute('id', 'datePickerDiv')
-      fMap.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv)
+      fMap.controls[google.maps.ControlPosition.TOP_CENTER].push(datePickerDiv)
       
       today = new Date()
       $(datePickerDiv).datepicker(
@@ -77,9 +77,10 @@ initializeMapPage = ->
                   marker.setMap(fMap)
                   fMarkers.push(marker)
                   google.maps.event.addListener(marker, 'click', ->
-                     infoWindow = new google.maps.InfoWindow()
-                     infoWindow.setContent(marker.title)
-                     infoWindow.open(fMap, marker)
+                     fCurrentInfoWindow.close() if null != fCurrentInfoWindow
+                     fCurrentInfoWindow = new google.maps.InfoWindow()
+                     fCurrentInfoWindow.setContent(marker.title)
+                     fCurrentInfoWindow.open(fMap, marker)
                      return false;)
                     
          error: ->

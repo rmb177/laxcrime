@@ -16,9 +16,6 @@ from models.IncidentReport import IncidentReport
 from models.IncidentType import IncidentType
 
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.DEBUG)
-
 class UploadInformationHandler(webapp2.RequestHandler):
 
    def get(self):

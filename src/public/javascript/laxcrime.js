@@ -24,7 +24,7 @@
   };
 
   initializeMapPage = function() {
-    var fMap, fMarkers, fSelectedDate, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
+    var fCurrentInfoWindow, fMap, fMarkers, fSelectedDate, getUserLocation, kCenterOfLaCrosse, kDefaultZoomLevel, kEarliestDateWithData, kZoomLevelWithLocation, setupMapControls, updateMap;
     kEarliestDateWithData = new Date(2012, 0, 1);
     kCenterOfLaCrosse = new google.maps.LatLng(43.81211, -91.22695);
     kDefaultZoomLevel = 15;
@@ -33,6 +33,7 @@
     */
 
     fMarkers = [];
+    fCurrentInfoWindow = null;
     fMap = null;
     fSelectedDate = null;
     /*
@@ -50,7 +51,7 @@
       fMap = new google.maps.Map(document.getElementById("mapPage"), options);
       datePickerDiv = document.createElement('div');
       datePickerDiv.setAttribute('id', 'datePickerDiv');
-      fMap.controls[google.maps.ControlPosition.RIGHT_TOP].push(datePickerDiv);
+      fMap.controls[google.maps.ControlPosition.TOP_CENTER].push(datePickerDiv);
       today = new Date();
       $(datePickerDiv).datepicker({
         minDate: kEarliestDateWithData,
@@ -101,10 +102,12 @@
               marker.setMap(fMap);
               fMarkers.push(marker);
               return google.maps.event.addListener(marker, 'click', function() {
-                var infoWindow;
-                infoWindow = new google.maps.InfoWindow();
-                infoWindow.setContent(marker.title);
-                infoWindow.open(fMap, marker);
+                if (null !== fCurrentInfoWindow) {
+                  fCurrentInfoWindow.close();
+                }
+                fCurrentInfoWindow = new google.maps.InfoWindow();
+                fCurrentInfoWindow.setContent(marker.title);
+                fCurrentInfoWindow.open(fMap, marker);
                 return false;
               });
             })(incident));

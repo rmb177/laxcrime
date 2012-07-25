@@ -5,9 +5,6 @@ Copyright (c) 2012 Brubaker LLC. All rights reserved.
 import webapp2
 
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.DEBUG)
-
 class AuthorizeUser(webapp2.RequestHandler):
 
    def post(self):
