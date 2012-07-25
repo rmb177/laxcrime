@@ -2,7 +2,6 @@
 Copyright (c) 2012 Brubaker LLC. All rights reserved.
 """
 
-import logging
 import os
 import re
 import webapp2
