@@ -42,11 +42,8 @@ initializeMapPage = ->
       today = new Date()
       $(datePickerDiv).datepicker(
        minDate: kEarliestDateWithData,
-       maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1))
-      
-      fSelectedDate = $(datePickerDiv).datepicker('getDate')
-      
-      google.maps.event.addDomListener(datePickerDiv, 'click', ->
+       maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+       onSelect: ->
          newDate = $(datePickerDiv).datepicker('getDate')
          if newDate.getTime() != fSelectedDate.getTime()
             marker.setMap(null) for marker in fMarkers
@@ -54,6 +51,7 @@ initializeMapPage = ->
             fSelectedDate = newDate      
             updateMap())
       
+      fSelectedDate = $(datePickerDiv).datepicker('getDate')
    ###
    Check if the user's browser supports geolocation and if so, update map options to center
    on the location and zoom in a little bit.
@@ -91,6 +89,5 @@ initializeMapPage = ->
       setupMapControls()
       getUserLocation()
       updateMap()
-
 
 $(document).ready(initializeAuthorizePage)

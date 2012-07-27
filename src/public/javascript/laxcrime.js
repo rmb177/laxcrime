@@ -55,22 +55,22 @@
       today = new Date();
       $(datePickerDiv).datepicker({
         minDate: kEarliestDateWithData,
-        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
-      });
-      fSelectedDate = $(datePickerDiv).datepicker('getDate');
-      return google.maps.event.addDomListener(datePickerDiv, 'click', function() {
-        var marker, newDate, _i, _len;
-        newDate = $(datePickerDiv).datepicker('getDate');
-        if (newDate.getTime() !== fSelectedDate.getTime()) {
-          for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
-            marker = fMarkers[_i];
-            marker.setMap(null);
+        maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+        onSelect: function() {
+          var marker, newDate, _i, _len;
+          newDate = $(datePickerDiv).datepicker('getDate');
+          if (newDate.getTime() !== fSelectedDate.getTime()) {
+            for (_i = 0, _len = fMarkers.length; _i < _len; _i++) {
+              marker = fMarkers[_i];
+              marker.setMap(null);
+            }
+            fMarkers = [];
+            fSelectedDate = newDate;
+            return updateMap();
           }
-          fMarkers = [];
-          fSelectedDate = newDate;
-          return updateMap();
         }
       });
+      return fSelectedDate = $(datePickerDiv).datepicker('getDate');
     };
     /*
        Check if the user's browser supports geolocation and if so, update map options to center
